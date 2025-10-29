@@ -1,0 +1,24 @@
+events {}
+
+http {
+    upstream blue_upstream {
+        server app_blue:3000;
+    }
+
+    upstream green_upstream {
+        server app_green:3000;
+    }
+
+    server {
+        listen 80;
+
+        location /version {
+            proxy_pass http://${ACTIVE_POOL}_upstream;
+        }
+
+        location /healthz {
+            proxy_pass http://${ACTIVE_POOL}_upstream;
+        }
+    }
+}
+
