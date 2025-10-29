@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app_blue:
     image: "${BLUE_IMAGE}"
+    container_name: app_blue
     ports:
       - "8081:3000"
     environment:
@@ -13,6 +14,7 @@ services:
 
   app_green:
     image: "${GREEN_IMAGE}"
+    container_name: app_green
     ports:
       - "8082:3000"
     environment:
@@ -23,12 +25,14 @@ services:
 
   nginx:
     image: nginx:stable-alpine
+    container_name: nginx
     ports:
       - "8080:80"
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
     environment:
       - ACTIVE_POOL=${ACTIVE_POOL}
+      - PASSIVE_POOL=${PASSIVE_POOL}
     entrypoint:
       - /bin/sh
       - -c
