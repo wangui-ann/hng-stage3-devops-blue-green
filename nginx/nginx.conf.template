@@ -1,29 +1,31 @@
 events {}
 
 http {
-    upstream backend {
-        server ${ACTIVE_POOL}_app:3000 max_fails=1 fail_timeout=1s;
-        server blue_app:3000 backup;
-        server green_app:3000 backup;
+    upstream app_backend {
+        server ${ACTIVE_POOL}_app:$PORT max_fails=1 fail_timeout=3s;
+        server blue_app:$PORT backup;
+        server green_app:$PORT backup;
     }
 
     server {
         listen 80;
 
         location / {
-            proxy_pass http://backend;
+            proxy_pass http://app_backend;
             proxy_http_version 1.1;
 
+            proxy_set_header Connection "";
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
 
-            proxy_connect_timeout 1s;
-            proxy_send_timeout 1s;
-            proxy_read_timeout 1s;
+            proxy_connect_timeout 5s;
+            proxy_send_timeout 5s;
+            proxy_read_timeout 5s;
 
             proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+            proxy_next_upstream_tries 2;
         }
     }
 }
