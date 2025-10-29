@@ -1,8 +1,19 @@
+events {}
+
 http {
+    include       mime.types;
+    default_type  application/json;
+    sendfile        on;
+    keepalive_timeout 65;
+
+    # Upstream pool — primary = ${ACTIVE_POOL}, backup = the other one
     upstream backend {
-        server ${ACTIVE_POOL}_app:3000 max_fails=1 fail_timeout=3s;
-        server blue_app:3000 backup;
-        server green_app:3000 backup;
+        # Primary app (active pool)
+        server ${ACTIVE_POOL}_app:${PORT} max_fails=1 fail_timeout=1s;
+
+        # Backup app (the opposite of ACTIVE_POOL)
+        server blue_app:${PORT} backup;
+        server green_app:${PORT} backup;
     }
 
     server {
@@ -21,7 +32,9 @@ http {
             proxy_send_timeout 1s;
             proxy_read_timeout 1s;
 
+            # Retry on errors or timeouts to backup
             proxy_next_upstream error timeout http_500 http_502 http_503 http_504;
+            proxy_next_upstream_tries 2;
         }
     }
 }
