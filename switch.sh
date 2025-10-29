@@ -1,19 +1,13 @@
 #!/bin/bash
-
 ENV_FILE=".env"
 CURRENT=$(grep ACTIVE_POOL "$ENV_FILE" | cut -d '=' -f2)
-
-if [ "$CURRENT" = "blue" ]; then
-  NEW="green"
-else
-  NEW="blue"
-fi
-
-# Update .env
+NEW=$([ "$CURRENT" = "blue" ] && echo "green" || echo "blue")
 sed -i "s/ACTIVE_POOL=$CURRENT/ACTIVE_POOL=$NEW/" "$ENV_FILE"
+
+# Switch config
+cp ./nginx/nginx.$NEW.conf ./nginx/nginx.conf
+
+# Reload Nginx instantly
+docker exec $(docker ps -qf "name=nginx") nginx -s reload
+
 echo "Switched to $NEW"
-
-docker-compose --env-file "$ENV_FILE" up -d --build nginx
-
-docker-compose --env-file "$ENV_FILE" up -d --build
-
