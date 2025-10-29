@@ -6,7 +6,7 @@ services:
     ports:
       - "8081:3000"
     environment:
-    RELEASE_ID: "${RELEASE_ID_GREEN}"
+      RELEASE_ID: "${RELEASE_ID_BLUE}"
       PORT: 3000
       HOST: 0.0.0.0
 
