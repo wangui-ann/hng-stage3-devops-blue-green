@@ -9,7 +9,6 @@ services:
     environment:
       RELEASE_ID: "${RELEASE_ID_BLUE}"
       APP_POOL: blue
-      PORT: "${PORT}"
       HOST: 0.0.0.0
 
   green_app:
@@ -20,7 +19,6 @@ services:
     environment:
       RELEASE_ID: "${RELEASE_ID_GREEN}"
       APP_POOL: green
-      PORT: "${PORT}"
       HOST: 0.0.0.0
 
   nginx:
