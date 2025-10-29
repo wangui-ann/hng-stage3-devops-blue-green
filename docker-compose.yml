@@ -2,22 +2,20 @@ version: '3.8'
 
 services:
   app_blue:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: your-backend-image:v1.0.0
     container_name: app_blue
     environment:
       - RELEASE_ID=${RELEASE_ID_BLUE}
+      - APP_POOL=blue
     ports:
       - "3001:3000"
 
   app_green:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: your-backend-image:v1.0.1
     container_name: app_green
     environment:
       - RELEASE_ID=${RELEASE_ID_GREEN}
+      - APP_POOL=green
     ports:
       - "3002:3000"
 
