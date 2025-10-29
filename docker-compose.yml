@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
-  app_blue:
+  blue_app:
     image: "${BLUE_IMAGE}"
-    container_name: app_blue
+    container_name: blue_app
     ports:
       - "8081:3000"
     environment:
@@ -12,9 +10,9 @@ services:
       PORT: "${PORT}"
       HOST: 0.0.0.0
 
-  app_green:
+  green_app:
     image: "${GREEN_IMAGE}"
-    container_name: app_green
+    container_name: green_app
     ports:
       - "8082:3000"
     environment:
@@ -22,25 +20,3 @@ services:
       APP_POOL: green
       PORT: "${PORT}"
       HOST: 0.0.0.0
-
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-    environment:
-      - ACTIVE_POOL=${ACTIVE_POOL}
-    entrypoint:
-      - /bin/sh
-      - -c
-      - >
-        apk add --no-cache gettext &&
-        envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf &&
-        nginx -g 'daemon off;'
-    depends_on:
-      app_blue:
-        condition: service_started
-      app_green:
-        condition: service_started
