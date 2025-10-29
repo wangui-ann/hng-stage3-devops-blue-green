@@ -9,7 +9,7 @@ services:
     environment:
       RELEASE_ID: "${RELEASE_ID_BLUE}"
       APP_POOL: blue
-      PORT: 3000
+      PORT: "${PORT}"
       HOST: 0.0.0.0
 
   app_green:
@@ -20,7 +20,7 @@ services:
     environment:
       RELEASE_ID: "${RELEASE_ID_GREEN}"
       APP_POOL: green
-      PORT: 3000
+      PORT: "${PORT}"
       HOST: 0.0.0.0
 
   nginx:
@@ -32,7 +32,6 @@ services:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
     environment:
       - ACTIVE_POOL=${ACTIVE_POOL}
-      - PASSIVE_POOL=${PASSIVE_POOL}
     entrypoint:
       - /bin/sh
       - -c
