@@ -7,6 +7,7 @@ services:
       - "8081:3000"
     environment:
       RELEASE_ID: "${RELEASE_ID_BLUE}"
+      APP_POOL: blue
       PORT: 3000
       HOST: 0.0.0.0
 
@@ -16,6 +17,7 @@ services:
       - "8082:3000"
     environment:
       RELEASE_ID: "${RELEASE_ID_GREEN}"
+      APP_POOL: green
       PORT: 3000
       HOST: 0.0.0.0
 
