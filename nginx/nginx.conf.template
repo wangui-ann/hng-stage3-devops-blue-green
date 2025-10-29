@@ -11,7 +11,7 @@ http {
     keepalive_timeout  65;
 
     upstream backend {
-        server app_blue:3000 max_fails=1 fail_timeout=2s;
+        server app_blue:3000 max_fails=1 fail_timeout=1s;
         server app_green:3000 backup;
     }
 
