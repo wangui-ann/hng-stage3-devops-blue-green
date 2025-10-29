@@ -1,0 +1,43 @@
+name: Verify Blue/Green Deployment
+
+on:
+  push:
+    paths:
+      - '**.yml'
+      - '**.template'
+      - '.env'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Launch stack
+        run: docker-compose --env-file .env up -d
+
+      - name: Wait for services
+        run: sleep 10
+
+      - name: Verify /version
+        run: curl -f http://localhost:8080/version
+
+      - name: Verify /healthz
+        run: curl -f http://localhost:8080/healthz
+
+      - name: Switch pool
+        run: ./switch.sh
+
+      - name: Re-verify after switch
+        run: curl -f http://localhost:8080/version
+
