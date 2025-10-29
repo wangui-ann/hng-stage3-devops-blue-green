@@ -23,7 +23,7 @@ services:
       PORT: "${PORT}"
       HOST: 0.0.0.0
 
-  nginx:
+    nginx:
     image: nginx:stable-alpine
     container_name: nginx
     ports:
