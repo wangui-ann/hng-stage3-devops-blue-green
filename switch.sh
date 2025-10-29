@@ -4,10 +4,8 @@ CURRENT=$(grep ACTIVE_POOL "$ENV_FILE" | cut -d '=' -f2)
 NEW=$([ "$CURRENT" = "blue" ] && echo "green" || echo "blue")
 sed -i "s/ACTIVE_POOL=$CURRENT/ACTIVE_POOL=$NEW/" "$ENV_FILE"
 
-# Switch config
 cp ./nginx/nginx.$NEW.conf ./nginx/nginx.conf
 
-# Reload Nginx instantly
 docker exec $(docker ps -qf "name=nginx") nginx -s reload
 
 echo "Switched to $NEW"
