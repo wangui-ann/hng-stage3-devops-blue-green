@@ -1,6 +1,6 @@
 http {
     upstream backend {
-        server ${ACTIVE_POOL}_app:3000 max_fails=1 fail_timeout=1s;
+        server ${ACTIVE_POOL}_app:3000 max_fails=1 fail_timeout=10s;
         server blue_app:3000 backup;
         server green_app:3000 backup;
     }
