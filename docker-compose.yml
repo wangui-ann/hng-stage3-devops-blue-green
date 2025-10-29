@@ -1,30 +1,34 @@
 version: '3.8'
+
 services:
   nginx:
-  image: nginx:stable-alpine
-  ports:
-    - "8080:80"
-  volumes:
-    - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-  environment:
-    - ACTIVE_POOL=${ACTIVE_POOL}
-  entrypoint: ["/bin/sh", "-c", "apk add --no-cache gettext && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
-  depends_on:
-    - app_blue
-    - app_green
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+    environment:
+      ACTIVE_POOL: ${ACTIVE_POOL}
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache gettext && envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+    depends_on:
+      app_blue:
+        condition: service_started
+      app_green:
+        condition: service_started
 
   app_blue:
     image: ${BLUE_IMAGE}
     ports:
       - "8081:3000"
     environment:
-      - RELEASE_ID=${RELEASE_ID_BLUE}
-      - PORT=3000
+      RELEASE_ID: ${RELEASE_ID_BLUE}
+      PORT: 3000
 
   app_green:
     image: ${GREEN_IMAGE}
     ports:
       - "8082:3000"
     environment:
-      - RELEASE_ID=${RELEASE_ID_GREEN}
-      - PORT=3000
+      RELEASE_ID: ${RELEASE_ID_GREEN}
+      PORT: 3000
+
