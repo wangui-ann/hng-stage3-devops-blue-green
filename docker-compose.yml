@@ -31,11 +31,3 @@ services:
     depends_on:
       - app_blue
       - app_green
-
-  chaos:
-    build:
-      context: ./chaos
-      dockerfile: Dockerfile
-    container_name: chaos
-    ports:
-      - "8081:8081"
