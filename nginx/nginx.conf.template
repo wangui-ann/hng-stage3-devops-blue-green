@@ -1,12 +1,9 @@
 events {}
 
 http {
-    upstream blue_upstream {
+    upstream app_upstream {
         server app_blue:3000 max_fails=1 fail_timeout=5s;
-    }
-
-    upstream green_upstream {
-        server app_green:3000 max_fails=1 fail_timeout=5s;
+        server app_green:3000 backup;
     }
 
     server {
@@ -16,12 +13,12 @@ http {
         proxy_next_upstream_tries 2;
 
         location /version {
-            proxy_pass http://${ACTIVE_POOL}_upstream;
+            proxy_pass http://app_upstream;
             proxy_pass_request_headers on;
         }
 
         location /healthz {
-            proxy_pass http://${ACTIVE_POOL}_upstream;
+            proxy_pass http://app_upstream;
             proxy_pass_request_headers on;
         }
     }
