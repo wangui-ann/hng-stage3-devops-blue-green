@@ -2,41 +2,45 @@ version: '3.8'
 
 services:
   blue_app:
-    image: ${BLUE_IMAGE}
+    image: "${BLUE_IMAGE}"
     container_name: blue_app
-    environment:
-      - PORT=${PORT}
-      - RELEASE_ID=${RELEASE_ID_BLUE}
-      - APP_POOL=blue
     ports:
-      - "8081:${PORT}"
-    restart: unless-stopped
+      - "8081:3000"
+    environment:
+      RELEASE_ID: "${RELEASE_ID_BLUE}"
+      APP_POOL: blue
+      PORT: "${PORT}"
+      HOST: 0.0.0.0
 
   green_app:
-    image: ${GREEN_IMAGE}
+    image: "${GREEN_IMAGE}"
     container_name: green_app
-    environment:
-      - PORT=${PORT}
-      - RELEASE_ID=${RELEASE_ID_GREEN}
-      - APP_POOL=green
     ports:
-      - "8082:${PORT}"
-    restart: unless-stopped
+      - "8082:3000"
+    environment:
+      RELEASE_ID: "${RELEASE_ID_GREEN}"
+      APP_POOL: green
+      PORT: "${PORT}"
+      HOST: 0.0.0.0
 
   nginx:
-    image: nginx:1.25-alpine
+    image: nginx:stable-alpine
     container_name: nginx
-    depends_on:
-      - blue_app
-      - green_app
     ports:
       - "8080:80"
     volumes:
-      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
     environment:
       - ACTIVE_POOL=${ACTIVE_POOL}
-      - PORT=${PORT}
-    command: >
-      /bin/sh -c "envsubst '$$ACTIVE_POOL $$PORT' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf &&
-                  nginx -g 'daemon off;'"
-    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - >
+        apk add --no-cache gettext &&
+        envsubst '${ACTIVE_POOL}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf &&
+        nginx -g 'daemon off;'
+    depends_on:
+      blue_app:
+        condition: service_started
+      green_app:
+        condition: service_started
