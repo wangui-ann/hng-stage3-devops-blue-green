@@ -1,3 +1,5 @@
+events {}
+
 http {
     upstream backend {
         server ${ACTIVE_POOL}_app:3000 max_fails=1 fail_timeout=1s;
