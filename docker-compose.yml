@@ -6,7 +6,9 @@ services:
     ports:
       - "8081:3000"
     environment:
-      - ACTIVE_POOL=${ACTIVE_POOL}
+    RELEASE_ID: "${RELEASE_ID_GREEN}"
+      PORT: 3000
+      HOST: 0.0.0.0
 
   app_green:
     image: "${GREEN_IMAGE}"
@@ -23,6 +25,8 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+    environment:
+      - ACTIVE_POOL=${ACTIVE_POOL}
     entrypoint:
       - /bin/sh
       - -c
