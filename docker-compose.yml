@@ -6,9 +6,7 @@ services:
     ports:
       - "8081:3000"
     environment:
-      RELEASE_ID: "${RELEASE_ID_BLUE}"
-      PORT: 3000
-      HOST: 0.0.0.0
+      - ACTIVE_POOL=${ACTIVE_POOL}
 
   app_green:
     image: "${GREEN_IMAGE}"
